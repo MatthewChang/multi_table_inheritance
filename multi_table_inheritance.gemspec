@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = MultiTableInheritance::VERSION
   s.authors     = ["Matthew Chang"]
   s.email       = ["matthew@callnine.com"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of MultiTableInheritance."
-  s.description = "TODO: Description of MultiTableInheritance."
+  s.homepage    = "https://www.callnine.com"
+  s.summary     = "Enable deep multi table inheritance"
+  s.description = ""
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.2.7"
 
   s.add_development_dependency "sqlite3"
+  s.add_development_dependency "rspec"
 end
