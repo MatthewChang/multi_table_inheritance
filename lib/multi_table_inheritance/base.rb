@@ -4,6 +4,14 @@ module MultiTableInheritance
       class_attribute :mti_parent_class
     end
 
+    def specific
+      if self.respond_to?(:mti_child) && !mti_child.nil?
+        mti_child.specific
+      else
+        self
+      end
+    end
+
     module ClassMethods
       #This is pretty wack, but not sure a better way to selectively run code in the
       #instantiate call that is threadsafe
@@ -35,10 +43,8 @@ module MultiTableInheritance
       def setup_child_for klass
         include MultiTableInheritance::ChildInstanceMethods
         self.mti_parent_class = klass
-        class_eval "def #{name}; super || build_#{name} end"
 
-
-        has_one mti_parent_symbol, as: :child
+        has_one mti_parent_symbol, as: :mti_child
         self.class_eval <<-Ruby, __FILE__, __LINE__ + 1
           def #{mti_parent_symbol}
             self.class.__bypass_instantiate {super || build_#{mti_parent_symbol}}
@@ -48,7 +54,7 @@ module MultiTableInheritance
       end
 
       def setup_parent
-        belongs_to :child, polymorphic: true
+        belongs_to :mti_child, polymorphic: true
         extend MultiTableInheritance::ParentStaticMethods
         include MultiTableInheritance::ParentInstanceMethods
       end

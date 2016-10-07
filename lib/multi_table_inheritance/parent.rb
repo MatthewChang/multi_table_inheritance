@@ -15,12 +15,5 @@ module MultiTableInheritance
   end
 
   module ParentInstanceMethods
-    def specific
-      if child.respond_to? :specific
-        child.specific
-      else
-        child
-      end
-    end
   end
 end

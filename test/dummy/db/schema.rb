@@ -11,39 +11,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160923015449) do
+ActiveRecord::Schema.define(version: 20160930022530) do
 
   create_table "cars", force: :cascade do |t|
-    t.integer "child_id"
-    t.string  "child_type"
+    t.integer "mti_child_id"
+    t.string  "mti_child_type"
     t.string  "model"
   end
 
   create_table "explorers", force: :cascade do |t|
-    t.integer "child_id"
-    t.string  "child_type"
+    t.integer "mti_child_id"
+    t.string  "mti_child_type"
     t.string  "driver"
   end
 
   create_table "fords", force: :cascade do |t|
-    t.integer "child_id"
-    t.string  "child_type"
+    t.integer "mti_child_id"
+    t.string  "mti_child_type"
     t.integer "year"
   end
 
   create_table "trains", force: :cascade do |t|
-    t.integer "child_id"
-    t.string  "child_type"
+    t.integer "mti_child_id"
+    t.string  "mti_child_type"
     t.integer "passengers"
   end
 
   create_table "vehicles", force: :cascade do |t|
-    t.integer  "child_id"
-    t.string   "child_type"
+    t.integer  "mti_child_id"
+    t.string   "mti_child_type"
     t.integer  "status"
     t.integer  "wheels"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
+
+  add_index "vehicles", ["mti_child_id", "mti_child_type"], name: "index_vehicles_on_mti_child_id_and_mti_child_type", unique: true
 
 end
