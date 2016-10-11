@@ -1,8 +1,12 @@
+require 'byebug'
+
 module MultiTableInheritance
   module Base extend ActiveSupport::Concern
     included do
       class_attribute :mti_parent_class
+      # Vehicle::ActiveRecord_Relation
     end
+
 
     def specific
       if self.respond_to?(:mti_child) && !mti_child.nil?
@@ -19,9 +23,9 @@ module MultiTableInheritance
         yield
       end
 
-      def mti_parent_classes
+      def mti_ancestor_classes
         if mti_parent_class
-          (mti_parent_class.mti_parent_classes || []) << mti_parent_class
+          (mti_parent_class.mti_ancestor_classes || []) << mti_parent_class
         else
           []
         end
@@ -30,9 +34,15 @@ module MultiTableInheritance
       def mti_parent_table
         self.mti_parent_class.table_name.to_sym
       end
+      def mti_ancestor_tables
+        self.mti_ancestor_classes.map {|e| e.table_name.to_sym}
+      end
 
       def mti_parent_symbol
         mti_parent_table.to_s.singularize.to_sym
+      end
+      def mti_ancestor_symbols
+        mti_ancestor_tables.map {|e| e.to_s.singularize.to_sym}
       end
 
       def mti_extends klass
@@ -51,6 +61,9 @@ module MultiTableInheritance
           end
         Ruby
         after_save :save_parent
+        mti_ancestor_symbols.each do |e|
+          self.default_scope {joins(e)}
+        end
       end
 
       def setup_parent

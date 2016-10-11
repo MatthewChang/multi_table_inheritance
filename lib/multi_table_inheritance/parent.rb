@@ -4,14 +4,14 @@ module MultiTableInheritance
     #Did some benchmarking and dumping the call stack is almost neglibable compared
     #to the cost of sql calls; < 1/20th of the time
     #Overrides funcitonality of http://apidock.com/rails/ActiveRecord/Base/instantiate/class
-    def instantiate(*args)
-      bypassed = caller_locations.reduce(false) {|v,e| v || e.label == "__bypass_instantiate"}
-      unless bypassed
-        super.specific
-      else
-        super
-      end
-    end
+    # def instantiate(*args)
+    #   bypassed = caller_locations.reduce(false) {|v,e| v || e.label == "__bypass_instantiate"}
+    #   unless bypassed
+    #     super.specific
+    #   else
+    #     super
+    #   end
+    # end
   end
 
   module ParentInstanceMethods

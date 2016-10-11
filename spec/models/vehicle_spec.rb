@@ -24,20 +24,19 @@ RSpec.describe Vehicle, type: :model do
     Car.create
     Train.create
     Ford.create
-    expect(Vehicle.all.count).to be 3
-    expect(Vehicle.first.is_a? Car).to be_truthy
-    expect(Vehicle.all[1].is_a? Train).to be_truthy
-    expect(Vehicle.last.is_a? Ford).to be_truthy
+    expect(Vehicle.all.specific.count).to be 3
+    expect(Vehicle.first.specific.is_a? Car).to be_truthy
+    expect(Vehicle.all[1].specific.is_a? Train).to be_truthy
+    expect(Vehicle.last.specific.is_a? Ford).to be_truthy
   end
 
   it 'Can get exact types as well' do
     Car.create
     Train.create
     Ford.create
-    expect(Vehicle.__bypass_instantiate{Vehicle.all.count}).to be 3
-    expect(Vehicle.__bypass_instantiate{Vehicle.first.is_a? Car}).to be_falsey
-    expect(Vehicle.__bypass_instantiate{Vehicle.all[1].is_a? Train}).to be_falsey
-    expect(Vehicle.__bypass_instantiate{Vehicle.first.is_a? Vehicle}).to be_truthy
+    expect(Vehicle.all.count).to be 3
+    expect(Vehicle.first.is_a? Vehicle).to be_truthy
+    expect(Vehicle.all[1].is_a? Vehicle).to be_truthy
   end
 
   it 'allows initialization of parent values during create' do
@@ -62,14 +61,36 @@ RSpec.describe Vehicle, type: :model do
     expect{Ford.create.mti_child}.to raise_error(NoMethodError)
   end
 
-  # it "allows queries on super class attributes from children" do
+  it "allows queries on super class attributes from children" do
+    Ford.create(wheels: 4)
+    Car.create(wheels: 4)
+    Ford.create(wheels: 4, model: "explorer")
+    Ford.create(wheels: 8)
+    expect(Ford.count).to be 3
+    expect(Ford.where(model: nil).count).to be 2
+    expect(Ford.where(model: "explorer", wheels: 4).count).to be 1
+    expect(Ford.where(wheels: 4).count).to be 2
+  end
+
+  # it "propagates destruction" do
   #   Ford.create(wheels: 4)
+  #   Car.create(wheels: 4)
+  #   expect(Car.count).to eq 1
+  #   Ford.first.destroy
+  #   expect(Ford.count).to eq 0
+  #   expect(Car.count).to eq 1
+  #   Vehicle.first.destroy
+  #   expect(Vehicle.count).to eq 0
+  #   expect(Car.count).to eq 0
+  # end
+
+  # it "allows usage of parent scopes" do
+  #   Ford.create(wheels: 5)
   #   Car.create(wheels: 4)
   #   Ford.create(wheels: 4, model: "explorer")
   #   Ford.create(wheels: 8)
-  #   expect(Ford.count).to be 3
-  #   expect(Ford.where(model: nil).count).to be 2
-  #   expect(Ford.where(model: "explorer", wheels: 4).count).to be 1
-  #   expect(Ford.where(wheels: 4).count).to be 2
+  #   Vehicle.send(:scope, :quad, -> { where(wheels: 4) })
+  #   expect(Ford.quad.count).to be 1
+  #   expect(Ford.all.quad.first.model).to be "explorer"
   # end
 end

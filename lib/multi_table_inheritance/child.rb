@@ -22,7 +22,7 @@ module MultiTableInheritance
     def respond_to_missing? method, include_private = false
       super || delegate_to_super(method)
     end
-    
+
     private
 
     def delegate_to_super method
