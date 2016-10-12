@@ -24,8 +24,8 @@ RSpec.describe Vehicle, type: :model do
     Car.create
     Train.create
     Ford.create
-    expect(Vehicle.all.specific.count).to be 3
-    expect(Vehicle.first.specific.is_a? Car).to be_truthy
+    expect(Vehicle.specific.count).to be 3
+    expect(Vehicle.specific.first.is_a? Car).to be_truthy
     expect(Vehicle.all[1].specific.is_a? Train).to be_truthy
     expect(Vehicle.last.specific.is_a? Ford).to be_truthy
   end
@@ -107,6 +107,21 @@ RSpec.describe Vehicle, type: :model do
     expect(Ford.where(model: "explorer").quad.count).to eq 1
   end
 
+  it "correctly handles timestamps" do
+    Timecop.freeze
+    ford = Ford.create
+    Timecop.freeze(Time.now + 5.minutes)
+    expect(ford.created_at).to eq(Time.now-5.minutes)
+    expect(ford.updated_at).to eq(Time.now-5.minutes)
+    ford.save
+    expect(ford.updated_at).to eq(Time.now-5.minutes)
+    ford.update(year: 100)
+    expect(ford.updated_at).to eq Time.now
+    Timecop.return
+  end
+
+  #Note this adds the validation for all of the later tests
+  #I kind of fucked this up
   it "checks that parents are valid on save" do
     Vehicle.validates :wheels, presence: true
     class Vehicle

@@ -75,13 +75,20 @@ module MultiTableInheritance
         self.mti_parent_class = klass
 
         belongs_to mti_parent_symbol, dependent: :destroy, foreign_key: :id
+
         self.class_eval <<-Ruby, __FILE__, __LINE__ + 1
           def #{mti_parent_symbol}
             super || build_#{mti_parent_symbol}
           end
         Ruby
 
-        after_save :save_parent
+        after_save do
+          self.mti_parent.save
+          if self.changes.empty?
+            self.mti_parent.touch
+          end
+        end
+        after_touch {self.mti_parent.touch}
         before_create {self.mti_parent.mti_child_type = self.class.name}
 
         mti_ancestor_symbols.each do |e|
