@@ -14,6 +14,11 @@ module MultiTableInheritance
       end
     end
 
+    def inspect
+      return mti_parent.inspect + "\n" + super unless mti_parent_class.nil?
+      super
+    end
+
     module ClassMethods
       def specific
         all.map(&:specific)
