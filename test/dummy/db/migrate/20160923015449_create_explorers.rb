@@ -1,8 +1,6 @@
 class CreateExplorers < ActiveRecord::Migration
   def change
-    create_table :explorers do |t|
-      t.integer :mti_child_id
-      t.string :mti_child_type
+    create_table :explorers, mti_child: true do |t|
       t.string :driver
     end
   end

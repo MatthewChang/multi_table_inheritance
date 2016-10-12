@@ -19,9 +19,8 @@ ActiveRecord::Schema.define(version: 20160930022530) do
     t.string  "model"
   end
 
-  create_table "explorers", force: :cascade do |t|
-    t.integer "mti_child_id"
-    t.string  "mti_child_type"
+  create_table "explorers", id: false, force: :cascade do |t|
+    t.integer "id",     null: false
     t.string  "driver"
   end
 
@@ -31,9 +30,8 @@ ActiveRecord::Schema.define(version: 20160930022530) do
     t.integer "year"
   end
 
-  create_table "trains", force: :cascade do |t|
-    t.integer "mti_child_id"
-    t.string  "mti_child_type"
+  create_table "trains", id: false, force: :cascade do |t|
+    t.integer "id",         null: false
     t.integer "passengers"
   end
 

@@ -1,8 +1,6 @@
 class CreateFords < ActiveRecord::Migration
   def change
-    create_table :fords, id: false  do |t|
-      t.integer :id, null: false, unique: true
-      t.string :mti_child_type
+    create_table :fords, mti_child: true, extendable: true  do |t|
       t.integer :year
     end
   end

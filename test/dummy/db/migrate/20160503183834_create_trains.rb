@@ -1,8 +1,6 @@
 class CreateTrains < ActiveRecord::Migration
   def change
-    create_table :trains do |t|
-      t.integer :mti_child_id
-      t.string  :mti_child_type
+    create_table :trains, mti_child: true do |t|
   	  t.integer :passengers
     end
   end

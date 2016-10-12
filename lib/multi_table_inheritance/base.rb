@@ -82,6 +82,8 @@ module MultiTableInheritance
           end
         Ruby
 
+        #Not sure if clean saves are supposed to updated the timestamps
+        #are not, I've seen both happen, this should take care of it either way
         after_save do
           self.mti_parent.save
           if self.changes.empty?

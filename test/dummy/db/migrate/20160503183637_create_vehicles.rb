@@ -1,7 +1,6 @@
 class CreateVehicles < ActiveRecord::Migration
   def change
-    create_table :vehicles do |t|
-      t.string :mti_child_type
+    create_table :vehicles, extendable: true do |t|
       t.integer :status
       t.integer :wheels
       t.timestamps null: false
