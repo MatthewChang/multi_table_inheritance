@@ -95,13 +95,13 @@ RSpec.describe Vehicle, type: :model do
     expect(Car.count).to eq 0
   end
 
-  # it "allows usage of parent scopes" do
-  #   Ford.create(wheels: 5)
-  #   Car.create(wheels: 4)
-  #   Ford.create(wheels: 4, model: "explorer")
-  #   Ford.create(wheels: 8)
-  #   Vehicle.send(:scope, :quad, -> { where(wheels: 4) })
-  #   expect(Ford.quad.count).to be 1
-  #   expect(Ford.all.quad.first.model).to be "explorer"
-  # end
+  it "allows usage of parent scopes" do
+    Ford.create(wheels: 5)
+    Car.create(wheels: 4)
+    Ford.create(wheels: 4, model: "explorer")
+    Vehicle.send(:scope, :quad, -> { Vehicle.where(wheels: 4) })
+    expect(Ford.quad.count).to be 1
+    expect(Car.quad.count).to be 2
+    expect(Ford.all.quad.first.model).to eq "explorer"
+  end
 end

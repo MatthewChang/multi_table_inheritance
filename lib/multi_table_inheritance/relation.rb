@@ -24,5 +24,14 @@ module MultiTableInheritance
       end
       super(new_args)
     end
+
+    def scoping
+      super_value = super
+      if super_value.class == self.class || !super_value.is_a?(ActiveRecord::Relation)
+        super_value
+      else
+        self.merge(super_value)
+      end
+    end
   end
 end
