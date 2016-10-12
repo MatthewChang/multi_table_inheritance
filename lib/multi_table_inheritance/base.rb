@@ -91,7 +91,7 @@ module MultiTableInheritance
           end
         end
         after_touch {self.mti_parent.touch}
-        before_create {self.mti_parent.mti_child_type = self.class.name}
+        before_create {self.mti_parent.mti_child = self}
 
         mti_ancestor_symbols.each do |e|
           self.has_one e, through: mti_parent_symbol unless e == mti_parent_symbol
