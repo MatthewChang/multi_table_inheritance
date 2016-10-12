@@ -46,6 +46,4 @@ ActiveRecord::Schema.define(version: 20160930022530) do
     t.datetime "updated_at",     null: false
   end
 
-  add_index "vehicles", ["mti_child_id", "mti_child_type"], name: "index_vehicles_on_mti_child_id_and_mti_child_type", unique: true
-
 end

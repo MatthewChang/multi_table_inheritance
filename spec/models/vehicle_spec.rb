@@ -2,14 +2,14 @@ require 'spec_helper'
 
 RSpec.describe Vehicle, type: :model do
   it 'reports no parent' do
-    expect(Vehicle.mti_parent_classes).to eq []
+    expect(Vehicle.mti_ancestor_classes).to eq []
   end
   it 'car has one parent' do
-    expect(Car.mti_parent_classes).to eq [Vehicle]
+    expect(Car.mti_ancestor_classes).to eq [Vehicle]
   end
 
   it 'deep children report multiple parents' do
-    expect(Ford.mti_parent_classes).to match_array [Vehicle,Car]
+    expect(Ford.mti_ancestor_classes).to match_array [Vehicle,Car]
   end
   it 'new children have their parents initialized' do
     expect(Car.new.vehicle.is_a? Vehicle).to be_truthy
@@ -61,6 +61,17 @@ RSpec.describe Vehicle, type: :model do
     expect{Ford.create.mti_child}.to raise_error(NoMethodError)
   end
 
+  it "properly checks for query delegation" do
+    expect(Vehicle.mti_handles_query_param(:wheels)).to be_truthy
+    expect(Vehicle.mti_handles_query_param(:other)).to be_falsey
+    expect(Vehicle.mti_delegate_query_table(:other)).to be nil
+    expect(Car.mti_delegates_query?(:other)).to be_falsey
+    expect(Car.mti_delegates_query?(:model)).to be_falsey
+    expect(Car.mti_delegate_query_table(:model)).to be :cars
+    expect(Car.mti_delegate_query_table(:wheels)).to be :vehicles
+    expect(Car.mti_delegates_query?(:wheels)).to be_truthy
+  end
+
   it "allows queries on super class attributes from children" do
     Ford.create(wheels: 4)
     Car.create(wheels: 4)
@@ -72,17 +83,17 @@ RSpec.describe Vehicle, type: :model do
     expect(Ford.where(wheels: 4).count).to be 2
   end
 
-  # it "propagates destruction" do
-  #   Ford.create(wheels: 4)
-  #   Car.create(wheels: 4)
-  #   expect(Car.count).to eq 1
-  #   Ford.first.destroy
-  #   expect(Ford.count).to eq 0
-  #   expect(Car.count).to eq 1
-  #   Vehicle.first.destroy
-  #   expect(Vehicle.count).to eq 0
-  #   expect(Car.count).to eq 0
-  # end
+  it "propagates destruction" do
+    Ford.create(wheels: 4)
+    Car.create(wheels: 4)
+    expect(Car.count).to eq 2
+    Ford.first.destroy
+    expect(Ford.count).to eq 0
+    expect(Car.count).to eq 1
+    Vehicle.first.destroy
+    expect(Vehicle.count).to eq 0
+    expect(Car.count).to eq 0
+  end
 
   # it "allows usage of parent scopes" do
   #   Ford.create(wheels: 5)
