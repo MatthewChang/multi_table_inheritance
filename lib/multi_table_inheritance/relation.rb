@@ -2,11 +2,6 @@ require 'byebug'
 
 module MultiTableInheritance
   module Relation extend ActiveSupport::Concern
-    def specific
-      self.map(&:specific)
-    end
-
-
     # Overrides where to find the proper table for delegates query options
     #
     # @return [ActiveRecord_Relation] relation with new query options

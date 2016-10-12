@@ -4,9 +4,7 @@ module MultiTableInheritance
   module Base extend ActiveSupport::Concern
     included do
       class_attribute :mti_parent_class
-      # Vehicle::ActiveRecord_Relation
     end
-
 
     def specific
       if self.respond_to?(:mti_child) && !mti_child.nil?
@@ -17,10 +15,8 @@ module MultiTableInheritance
     end
 
     module ClassMethods
-      #This is pretty wack, but not sure a better way to selectively run code in the
-      #instantiate call that is threadsafe
-      def __bypass_instantiate
-        yield
+      def specific
+        all.map(&:specific)
       end
 
       def mti_ancestor_classes
@@ -75,15 +71,18 @@ module MultiTableInheritance
       def setup_child_for klass
         include MultiTableInheritance::ChildInstanceMethods
         extend MultiTableInheritance::ChildStaticMethods
+        self.primary_key = :id
         self.mti_parent_class = klass
 
-        has_one mti_parent_symbol, as: :mti_child, dependent: :destroy
+        belongs_to mti_parent_symbol, dependent: :destroy, foreign_key: :id
         self.class_eval <<-Ruby, __FILE__, __LINE__ + 1
           def #{mti_parent_symbol}
-            self.class.__bypass_instantiate {super || build_#{mti_parent_symbol}}
+            super || build_#{mti_parent_symbol}
           end
         Ruby
+
         after_save :save_parent
+        before_create {self.mti_parent.mti_child_type = self.class.name}
 
         mti_ancestor_symbols.each do |e|
           self.has_one e, through: mti_parent_symbol unless e == mti_parent_symbol
@@ -93,7 +92,7 @@ module MultiTableInheritance
       end
 
       def setup_parent
-        belongs_to :mti_child, polymorphic: true, dependent: :destroy
+        belongs_to :mti_child, polymorphic: true, dependent: :destroy, foreign_key: :id, foreign_type: :mti_child_type
         extend MultiTableInheritance::ParentStaticMethods
         include MultiTableInheritance::ParentInstanceMethods
       end
