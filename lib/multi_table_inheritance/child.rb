@@ -29,6 +29,14 @@ module MultiTableInheritance
       #blacklist some methods
       ![:mti_child].include?(method) && mti_parent.respond_to?(method)
     end
+
+    def check_parent_valid
+      unless mti_parent.valid?
+        mti_parent.errors.each do |att, message|
+          errors.add(att, message)
+        end
+      end
+    end
   end
 
   module ChildStaticMethods

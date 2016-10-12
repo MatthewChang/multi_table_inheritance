@@ -104,4 +104,28 @@ RSpec.describe Vehicle, type: :model do
     expect(Car.quad.count).to be 2
     expect(Ford.all.quad.first.model).to eq "explorer"
   end
+
+  it "checks that parents are valid on save" do
+    Vehicle.validates :wheels, presence: true
+    class Vehicle
+      def car_validation
+        if self.wheels != 4
+          errors.add(:wheels, "must be 4")
+        end
+      end
+    end
+    class Ford
+      def ford_validation
+        if self.model != "ford"
+          errors.add(:model, "must be ford")
+        end
+      end
+    end
+    Vehicle.validate :car_validation
+    Ford.validate :ford_validation
+    expect {Ford.create!(wheels: 5,model: "ford")}.to raise_error ActiveRecord::RecordInvalid
+    expect {Ford.create!()}.to raise_error ActiveRecord::RecordInvalid
+    expect {Car.create!(wheels: 4)}.not_to raise_error
+    expect {Ford.create!(wheels: 4,model: "ford")}.not_to raise_error
+  end
 end

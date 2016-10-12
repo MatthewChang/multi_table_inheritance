@@ -89,6 +89,7 @@ module MultiTableInheritance
           self.has_one e, through: mti_parent_symbol unless e == mti_parent_symbol
         end
         self.default_scope {joins(mti_root.table_name.singularize.to_sym)}
+        self.validate :check_parent_valid
       end
 
       def setup_parent
