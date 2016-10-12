@@ -61,6 +61,7 @@ RSpec.describe Vehicle, type: :model do
     expect{Ford.create.mti_child}.to raise_error(NoMethodError)
   end
 
+  #Might remove
   it "properly checks for query delegation" do
     expect(Vehicle.mti_handles_query_param(:wheels)).to be_truthy
     expect(Vehicle.mti_handles_query_param(:other)).to be_falsey
@@ -99,10 +100,11 @@ RSpec.describe Vehicle, type: :model do
     Ford.create(wheels: 5)
     Car.create(wheels: 4)
     Ford.create(wheels: 4, model: "explorer")
+    Ford.create(wheels: 4, model: "other")
     Vehicle.send(:scope, :quad, -> { Vehicle.where(wheels: 4) })
-    expect(Ford.quad.count).to be 1
-    expect(Car.quad.count).to be 2
-    expect(Ford.all.quad.first.model).to eq "explorer"
+    expect(Ford.quad.count).to be 2
+    expect(Car.quad.count).to be 3
+    expect(Ford.where(model: "explorer").quad.count).to eq 1
   end
 
   it "checks that parents are valid on save" do
