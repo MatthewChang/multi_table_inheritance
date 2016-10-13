@@ -121,6 +121,16 @@ RSpec.describe Vehicle, type: :model do
     Timecop.return
   end
 
+  it "doesn't break find_or_create" do
+    ford = Ford.find_or_create_by(model: "ford", year: 123) do |f|
+      f.wheels = 4
+    end
+    expect(Vehicle.count).to eq 1
+    expect(Ford.first.wheels).to eq 4
+    expect(Car.find_or_create_by(model: "ford").specific.year).to eq 123
+    expect(Vehicle.count).to eq 1
+  end
+
   #Note this adds the validation for all of the later tests
   #I kind of fucked this up
   it "checks that parents are valid on save" do
