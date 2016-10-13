@@ -131,6 +131,20 @@ RSpec.describe Vehicle, type: :model do
     expect(Vehicle.count).to eq 1
   end
 
+  #Note: Not sure if we actually want this in production
+  it "has one id for the entire chain of objects" do
+    5.times {Vehicle.create}
+    5.times {Ford.create}
+    5.times {Train.create}
+    expect(Vehicle.count).to be 15
+    Vehicle.all.each do |e|
+      expect(e.id).to eq e.specific.id
+    end
+    Vehicle.all.map(&:id).into {|ids| expect(ids.uniq).to match_array ids}
+    Ford.all.map(&:id).into {|ids| expect(ids.uniq).to match_array ids}
+    Train.all.map(&:id).into {|ids| expect(ids.uniq).to match_array ids}
+  end
+
   #Note this adds the validation for all of the later tests
   #I kind of fucked this up
   it "checks that parents are valid on save" do

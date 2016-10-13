@@ -76,7 +76,6 @@ module MultiTableInheritance
       def setup_child_for klass
         include MultiTableInheritance::ChildInstanceMethods
         extend MultiTableInheritance::ChildStaticMethods
-        self.primary_key = :id
         self.mti_parent_class = klass
 
         belongs_to mti_parent_symbol, dependent: :destroy, foreign_key: :id

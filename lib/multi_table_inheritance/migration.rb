@@ -22,9 +22,9 @@ module MultiTableInheritance
       def create_table(table_name, comment: nil, **options)
         extendable = options.delete(:extendable)
         child = options.delete(:mti_child)
-        options = options.merge id: false if child
+        #options = options.merge id: false if child
         super do |t|
-          t.integer :id, null: false, unique: true if child
+          #t.integer :id, null: false, unique: true if child
           t.string :mti_child_type if extendable
           yield(t)
         end
